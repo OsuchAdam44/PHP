@@ -1,0 +1,72 @@
+<?php
+
+echo "Dawaj dzisiejszy DD".PHP_EOL;
+$current_DD = readline(">");
+echo "Dawaj dzisiejszy MM".PHP_EOL;
+$current_MM = readline(">");
+echo "Dawaj dzisiejszy RRRR".PHP_EOL;
+$current_RRRR = readline(">");
+echo "Dawaj dzisiejszy dzien tygodnia (0, 1, 2, 3, 4, 5, 6)".PHP_EOL;
+$current_day  = readline(">");
+echo "Dawaj szukany DD".PHP_EOL;
+$calculated_DD = readline(">");
+echo "Dawaj szukany MM".PHP_EOL;
+$calculated_MM = readline(">");
+echo "Dawaj szukany RRRR".PHP_EOL;
+$calculated_RRRR = readline(">");
+$months = array ("31", "28", "31", "30", "31", "30", "31", "31", "30", "31", "30", "31");
+$days = array ("pon", "wt", "sr", "czw", "pt", "sob", "nied");
+$yeardifference = $calculated_RRRR-$current_RRRR;
+
+function next_intercelary($year) {
+	return $year+4-($year%4);
+}
+
+function is_intercalary($year) {
+	if ($year%4==0) {
+		return TRUE;
+	}
+	else {
+		return FALSE;
+	}
+}
+$intercelary_years_between = (next_intercelary($calculated_RRRR)-next_intercelary($current_RRRR))/4;
+
+$offset = 0;
+$offset+=$yeardifference;
+$offset+=$intercelary_years_between;
+
+$day_difference = $calculated_DD-$current_DD;
+if ($day_difference<0) {
+	$day_difference+=35;
+	}
+$offset+=$day_difference;
+
+
+if (is_intercalary($current_RRRR)==TRUE && $current_MM<=2) {
+	$offset+=1;
+	}
+if (is_intercalary($calculated_RRRR)==TRUE && $calculated_MM<=2) {
+	$offset+=6;
+	}
+
+while ($current_MM < $calculated_MM) {
+	$offset+=$months[($current_MM-1)];
+	$current_MM++;
+	}
+
+while ($current_MM > $calculated_MM) {
+	$offset-=$months[($current_MM-2)];
+	if ($offset<0) {
+		$offset+=35;
+		}
+	$current_MM--;
+	}
+
+$offset+=$current_day;
+
+$offset=$offset%7;
+
+echo $days[$offset].PHP_EOL;
+
+?>
